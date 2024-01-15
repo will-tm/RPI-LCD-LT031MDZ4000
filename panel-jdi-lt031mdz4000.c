@@ -276,6 +276,7 @@ static void jdi_panel_del(struct jdi_panel *jdi)
 static int jdi_panel_probe(struct mipi_dsi_device *dsi)
 {
 	struct jdi_panel *jdi;
+	struct device *dev;
 	int ret;
 
 	dsi->lanes = 2;
@@ -290,12 +291,23 @@ static int jdi_panel_probe(struct mipi_dsi_device *dsi)
 	mipi_dsi_set_drvdata(dsi, jdi);
 
 	jdi->dsi = dsi;
+	dev = &jdi->dsi->dev;
 
+	dev_dbg(dev, "jdi_panel_add\n");
 	ret = jdi_panel_add(jdi);
-	if (ret < 0)
+	if (ret < 0) {
+		dev_err(dev, "jdi panel init error %d\n", ret);
 		return ret;
+	}
 
-	return mipi_dsi_attach(dsi);
+	dev_dbg(dev, "mipi_dsi_attach\n");
+	ret = mipi_dsi_attach(dsi);
+	if (ret != 0) {
+		dev_err(dev, "mipi dsi attach error %d\n", ret);
+		return ret;
+	}
+
+	return 0;
 }
 
 static void jdi_panel_remove(struct mipi_dsi_device *dsi)
