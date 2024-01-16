@@ -185,7 +185,7 @@ static int jdi_panel_enable(struct drm_panel *panel)
 
 static const struct drm_display_mode default_mode = {
 
-		.clock = 34653,
+		.clock = (720 + 21 + 2 + 24) * (720 + 25 + 5 + 3) * 60 / 1000, // 34653KHz
 		.hdisplay = 720,
 		.hsync_start = 720 + 21,
 		.hsync_end = 720 + 21 + 2,
