@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0-only
 
+#include <linux/backlight.h>
 #include <linux/delay.h>
 #include <linux/gpio/consumer.h>
 #include <linux/module.h>
@@ -65,7 +66,7 @@ static int jdi_panel_init(struct jdi_panel *jdi)
 	mipi_dsi_dcs_write(dsi,0xbb,(u8[]){0x2f},1);
 	
 	mipi_dsi_dcs_write(dsi,0xb0,(u8[]){0x2f},1);
-	mdelay(20);
+	msleep(20);
 	dev_info(dev, "LCD init finished \n");
 	return 0;
 }
@@ -238,6 +239,61 @@ static const struct of_device_id jdi_of_match[] = {
 };
 MODULE_DEVICE_TABLE(of, jdi_of_match);
 
+
+static int jdi_bl_update_status(struct backlight_device *bl)
+{
+	struct mipi_dsi_device *dsi = bl_get_data(bl);
+	u16 brightness = backlight_get_brightness(bl);
+	int ret;
+
+	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+
+	ret = mipi_dsi_dcs_set_display_brightness(dsi, brightness);
+	if (ret < 0)
+		return ret;
+
+	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
+
+	return 0;
+}
+
+static int jdi_bl_get_brightness(struct backlight_device *bl)
+{
+	struct mipi_dsi_device *dsi = bl_get_data(bl);
+	u16 brightness;
+	int ret;
+
+	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+
+	ret = mipi_dsi_dcs_get_display_brightness(dsi, &brightness);
+	if (ret < 0)
+		return ret;
+
+	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
+
+	return brightness & 0xff;
+}
+
+static const struct backlight_ops jdi_bl_ops = {
+	.update_status = jdi_bl_update_status,
+	.get_brightness = jdi_bl_get_brightness,
+};
+
+static struct backlight_device *
+jdi_create_backlight(struct mipi_dsi_device *dsi)
+{
+	struct device *dev = &dsi->dev;
+	const struct backlight_properties props = {
+		.type = BACKLIGHT_RAW,
+		.brightness = 255,
+		.max_brightness = 255,
+	};
+
+	return devm_backlight_device_register(dev, dev_name(dev), dev, dsi,
+					      &jdi_bl_ops, &props);
+}
+
+
 static int jdi_panel_add(struct jdi_panel *jdi)
 {
 	struct device *dev = &jdi->dsi->dev;
@@ -262,6 +318,12 @@ static int jdi_panel_add(struct jdi_panel *jdi)
 	jdi->base.prepare_upstream_first = true;
 	drm_panel_init(&jdi->base, &jdi->dsi->dev, &jdi_panel_funcs,
 		       DRM_MODE_CONNECTOR_DSI);
+
+	jdi->base.backlight = jdi_create_backlight(jdi->dsi);
+	if (IS_ERR(jdi->base.backlight)) {
+		ret = PTR_ERR(jdi->base.backlight);
+		return dev_err_probe(dev, ret, "Failed to create backlight\n");
+	}
 
 	drm_panel_add(&jdi->base);
 
