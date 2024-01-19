@@ -65,7 +65,7 @@ static int jdi_panel_init(struct jdi_panel *jdi)
 	mipi_dsi_dcs_write(dsi,0xbb,(u8[]){0x2f},1);
 	
 	mipi_dsi_dcs_write(dsi,0xb0,(u8[]){0x2f},1);
-	mdelay(20);
+	msleep(20);
 	dev_info(dev, "LCD init finished \n");
 	return 0;
 }
