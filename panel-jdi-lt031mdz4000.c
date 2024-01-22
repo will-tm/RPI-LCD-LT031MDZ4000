@@ -409,5 +409,6 @@ static struct mipi_dsi_driver jdi_panel_driver = {
 module_mipi_dsi_driver(jdi_panel_driver);
 
 MODULE_AUTHOR("JamWu <312023299@qq.com>");
+MODULE_AUTHOR("William Markezana <william.markezana@gmail.com");
 MODULE_DESCRIPTION("JDI LT031MDZ4000 XGA");
 MODULE_LICENSE("GPL v2");
