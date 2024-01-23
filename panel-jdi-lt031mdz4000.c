@@ -186,16 +186,16 @@ static int jdi_panel_enable(struct drm_panel *panel)
 
 static const struct drm_display_mode default_mode = {
 
-		.clock = (720 + 21 + 2 + 24) * (720 + 25 + 5 + 3) * 60 / 1000, // 34653KHz
+		.clock = (720 + 21 + 2 + 24) * (720 + 22 + 5 + 3) * 60 / 1000, // 34515KHz
 		.hdisplay = 720,
 		.hsync_start = 720 + 21,
 		.hsync_end = 720 + 21 + 2,
 		.htotal = 720 + 21 + 2 + 24,
 
 		.vdisplay = 720,
-		.vsync_start = 720 + 25,
-		.vsync_end = 720 + 25 + 5,
-		.vtotal = 720 + 25 + 5 + 3,
+		.vsync_start = 720 + 22,
+		.vsync_end = 720 + 22 + 5,
+		.vtotal = 720 + 22 + 5 + 3,
 		.flags = 0,
 };
 
