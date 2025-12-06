@@ -9,10 +9,11 @@ all:
 	dtc -@ -I dts -O dtb -o vc4-kms-dsi-lt031mdz4000.dtbo vc4-kms-dsi-lt031mdz4000-overlay.dts
 
 clean:
-	rm *.dtbo
+	rm -f *.dtbo
 	make -C $(BUILD_DIR) M=$(PWD) clean
 
 install:
 	sudo cp -rf vc4-kms-dsi-lt031mdz4000.dtbo $(OVERLAYS_DIR)
 	sudo cp -rf panel-jdi-lt031mdz4000.ko $(DRIVER_PATH)
 	sudo depmod -A
+

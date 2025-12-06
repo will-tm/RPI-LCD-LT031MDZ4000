@@ -49,25 +49,25 @@ static int jdi_panel_init(struct jdi_panel *jdi)
 
 	mipi_dsi_dcs_write(dsi,0xb0,(u8[]){0x00},1);
 	msleep(5);
-	
+
 	mipi_dsi_dcs_write(dsi,0xe4,(u8[]){0x00,0x00,0x00,0x00,0x08},5);
-	
+
 	mipi_dsi_dcs_write(dsi,0xd0,(u8[]){0x45,0x45,0x71},3);
-	
+
 	mipi_dsi_dcs_write(dsi,0x6f,(u8[]){0x01},1);
 
 	mipi_dsi_dcs_exit_sleep_mode(dsi);
 	msleep(120);
-	
+
 	mipi_dsi_dcs_write(dsi,0xd0,(u8[]){0x52,0x4a,0x71},3);
-	
+
 	mipi_dsi_dcs_write(dsi,0xbe,(u8[]){0xff,0x0f,0x00,0x18,0x04,0x04,0x00,0x5d},8);
-	
+
 	mipi_dsi_dcs_write(dsi,0xbb,(u8[]){0x2f},1);
-	
+
 	mipi_dsi_dcs_write(dsi,0xb0,(u8[]){0x2f},1);
 	msleep(20);
-	dev_info(dev, "LCD init finished \n");
+	dev_info(dev, "LCD init finished\n");
 	return 0;
 }
 
@@ -409,6 +409,6 @@ static struct mipi_dsi_driver jdi_panel_driver = {
 module_mipi_dsi_driver(jdi_panel_driver);
 
 MODULE_AUTHOR("JamWu <312023299@qq.com>");
-MODULE_AUTHOR("William Markezana <william.markezana@gmail.com");
+MODULE_AUTHOR("William Markezana <william.markezana@gmail.com>");
 MODULE_DESCRIPTION("JDI LT031MDZ4000 XGA");
 MODULE_LICENSE("GPL v2");

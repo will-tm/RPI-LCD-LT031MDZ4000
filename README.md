@@ -31,7 +31,7 @@ LCD pins defaults to:
 Default pins can be changed, for example:
 ```
 #change Reset to GPIO5,BL_Enable to GPIO6
-dtoverlay=vc4-kms-dsi-lt031mdz4000,bl_en=5,reset=6
+dtoverlay=vc4-kms-dsi-lt031mdz4000,bl-en=5,reset=6
 
 ```
 
